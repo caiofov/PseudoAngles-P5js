@@ -9,38 +9,48 @@ class Point{ //Classe para os pontos que formam os vetores
         this.color = color //cor
     }
 
-    draw(translateX = false, translateY = false){ //desenha o ponto - deve ser chamada na função de desenho do P5.js
-        let xValue = translateX ? this.x + translateX : this.x
-        let yValue = translateY ? this.y + translateY : this.y
+    draw(){ //desenha o ponto - deve ser chamada na função de desenho do P5.js
         
         //todo ponto possui um label que indica sua coordenada
-        let buttonText = "x: " + nf(xValue,undefined, 2) + " y: " + nf(yValue, undefined, 2) //texto do label
-        let buttonTextFontSize = 15 //tamanho da fonte
-        let widthButtonText = textWidth(buttonText) * buttonTextFontSize/14 //largura do texto
-        //posição do texto
-        let buttonTextX = this.x 
-        let buttonTextY = this.y - this.radius
+        let pointTextFontSize = 15 //tamanho da fonte
         
         fill(this.color)
         stroke(this.color)
         strokeWeight(0.5)
-        textSize(buttonTextFontSize)
-        
+
         if(this.isHover()){ //se o mouse estiver por cima, irá mudar de cor
             fill(255,165,0)
         }
         
         circle(this.x,this.y,this.radius) //desenho do ponto
+    }
 
+    drawText(valueX, valueY){
+        //todo ponto possui um label que indica sua coordenada
+        let pointText = "x: " + nf(this.x,undefined, 2) + " y: " + nf(this.y, undefined, 2) //texto do label
+        let pointTextFontSize = 15 //tamanho da fonte
+        let widthpointText = textWidth(pointText) * pointTextFontSize/14 //largura do texto
+        //posição do texto
+        let pointTextX = valueX || valueX == 0 ? valueX : this.x
+        let pointTextY = (valueY || valueY == 0 ? valueY : this.y) - this.radius
+        
+        fill(this.color)
+        stroke(this.color)
+        strokeWeight(0.5)
+        textSize(pointTextFontSize)
+        
+        if(this.isHover()){ //se o mouse estiver por cima, irá mudar de cor
+            fill(255,165,0)
+        }
+        
         //agora, verificaremos se o label passará das extremidades do nosso canvas. Se isso acontecer, sua posição será recalculada
-        if(buttonTextX + widthButtonText > width){
-            buttonTextX -= (buttonTextX + widthButtonText) - width
+        if(pointTextX + widthpointText > width){
+            pointTextX -= (pointTextX + widthpointText) - width
         }
-        if(buttonTextY - buttonTextFontSize < 0){
-            buttonTextY += buttonTextFontSize
+        if(pointTextY - pointTextFontSize < 0){
+            pointTextY += pointTextFontSize
         }
-
-        text(buttonText, buttonTextX, buttonTextY) //desenha o label
+        text(pointText, pointTextX, pointTextY) //desenha o label   
     }
 
     isHover(){ //verifica se o mouse está por cima

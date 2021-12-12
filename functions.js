@@ -7,20 +7,21 @@ var isDrawing = true; //diz se está "pausado" ou não
 //textos dos botoes
 var addText = '[S] Somar '
 var clearText = '[C] Limpar tudo'
-var shuffleText = '[E] Embaralhar'
-var centralizeText = '[A] Centralizar'
 
 //textos na tela
 var escapeText = '[ESC] - Parar de desenhar'
 var escapeText2 = '[ESC] - Voltar a desenhar'
 var delText = '[DEL] - Remover elemento'
 
-var addButton, clearButton, backgroundColor, scpWidth, shuffleButton, centralizeButton;
+var addButton, clearButton, backgroundColor, scpWidth;
 var buttons = [];
+
+//translate canva
+var translateX, translateY
 
 function transformCanva(){
     // transformações para o sistema Y para cima e origem no centro da tela  
-    translate( width/2, height/2)
+    translate( translateX, translateY)
     scale( 1, -1 )
 }
 
@@ -90,16 +91,6 @@ function regenerateVectors(){ //repopula os vetor de vetores baseado nos pontos 
 function clearAll(){ //remove todos os pontos e todos os vetores
   vectors = []
   points = []
-}
-
-function shuffleVectors(){    
-  vectors = shuffle(vectors) //mistura a lista de vetores
-
-  updatePointSequence() //atualiza a sequência de pontos de acordo com os vetores -> essa função também atualiza os pontos de cada vetor
-  
-  centralizePoints() //centraliza os pontos e, consequentemnete, os vetores
-
-  checkCanvasBounds() //verifica se todos os pontos estão dentro do canva, se não, irá resolver
 }
 
 function centralizePoints(){ //centraliza os pontos para o meio do canvas
@@ -178,16 +169,28 @@ function updatePointSequence(){ //atualiza a sequencia de pontos e modifica os v
 
 
 function dotAngle(u, v){ //recebe dois vetores e calcula o angulo entre eles
-    let d = dot (u, v) //produto escalar
+    let d = dot(u.point2, v.point2) //produto escalar
+    print("Produto escalar: "+ d)
+    let nu = u.value //modulo de u
+    let nv = v.value //modulo de v
+
+    let c = d / (nu*nv) //cosseno
+    print("Cosseno:"+c)
+    print("retorno da função: "+ acos(c)*180/PI)
+    return acos(c)*180/PI //retorna o angulo - transformação de cosseno para angulo em graus
+}
+function crossAngle(u, v){ 
+    let d = cross(u.point2, v.point2)
     let nu = u.value //comprimento de u
     let nv = v.value //comprimento de v
-    print("MU = " +nu+" MV = "+nv)
-    let c = d / (nu*nv) //cosseno
+    let c = d / (nu*nv) //seno
     
-    return acos(c)*180/PI //retorna o angulo - transformação de cosseno para angulo em graus
+    return asin(c)*180/PI; //retorna o angulo - transformação de cosseno para angulo em graus
 }
 
 function dot(u, v){ //produto escalar u.v
-    
-    return u[0]*v[0] + u[1]*v[1]; 
+    return u.x*v.x + u.y*v.y; 
+}
+function cross(u,v){ //produto vetorial
+    return u.x*v.y - v.x*u.y;
 }

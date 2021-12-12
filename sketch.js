@@ -36,27 +36,26 @@ function setup(){
     //criando os botões
     addButton = new Button(10, 10, color(100,151,177), addText, "add");
     clearButton = new Button(110, 10, color(100,151,177), clearText, "clear");
-    shuffleButton = new Button(240, 10, color(100,151,177), shuffleText, "shuffle");
-    centralizeButton = new Button(370, 10, color(100,151,177), centralizeText, "centralize" )
   
-    //definndo o array de botões
-    buttons = [addButton, clearButton, shuffleButton, centralizeButton]
+    //definindo o array de botões
+    buttons = [addButton, clearButton]
   
     //calculando o tamanho dos textos que aparecerão na tela
     scpWidth = textWidth(escapeText)
     scpWidth2 = textWidth(escapeText2)
     delWidth = textWidth(delText)
+
+    //variaveis para transformar o canva
+    translateX = width/2
+    translateY = height/2
   
 }
   
 function mousePressed(){
+    transformCanva()
     if(mouseButton === "left" && isDrawing){ //se apertar com o botao esquerdo e não tiver pausado
-      
-        if(points.length > 0 ){
         vectors.push(currentVector) //adiciona o vetor atual ao array de vetores
-      }
-      
-      points.push(currentPoint)
+        points.push(currentPoint) //adiciona o ponto atual no array de pontos
     }
     
     else if(mouseButton === "left" && !(isDrawing)){ //se não tiver desenhando e acionar o mouse
@@ -85,10 +84,7 @@ function keyPressed(){
         clearAll()
         break
       
-      case(69): //embaralharar
-      if(vectors.length > 1){
-        shuffleVectors()
-      }
+      case(69):
         break
       
       case(46): //apagar um elemento
@@ -110,13 +106,17 @@ function keyPressed(){
     drawBackground()
     let currentEscapeText, currentDelTextY;
   
-    currentPoint = new Point(mousePosition(), color(1,31,75))
+    currentPoint = new Point([mouseX - translateX, translateY - mouseY], color(1,31,75))
+    currentVector = new Vector(
+        new Point([0,0]), 
+        currentPoint, 
+        color(1,31,75))
 
-    resetMatrix()
     if(isDrawing){
       currentEscapeText = escapeText //texto da instrução do ESC, caso esteja desenhando
       currentDelTextY = scpWidth*13/12 + 20 //coord Y da instrução do DEL, caso esteja desenhando
-      currentPoint.draw(-width/2, -height/2) //desenhar ponto atual (posição do mouse)
+      
+      currentPoint.draw() //desenhar ponto atual (posição do mouse)
     }
     else{
       currentEscapeText = escapeText2 //texto da instrução do ESC, caso não esteja desenhando
@@ -127,8 +127,6 @@ function keyPressed(){
     noFill()
     strokeWeight(0.4)
     textSize(13)
-    
-    
     vectors.forEach(v =>{ //desenhando os vetores
       v.draw()
     })
@@ -147,16 +145,21 @@ function keyPressed(){
     
     //se tiver desenhando, deverá desenhar o vetor atual, o que acompanha o mouse, com origem no centro do plano cartesiano
     if(isDrawing){
-      currentVector = new Vector(
-        new Point([width/2,height/2]), 
-        currentPoint, 
-        color(1,31,75)
-        )
       currentVector.draw()
     }
-    if(vectors.length > 1){
-        // console.log(dotAngle(vectors[0],vectors[1]))
-        // print(vectors[0].value)
-    }
+
+    //desenhar os textos
+    resetMatrix()
+    vectors.forEach(v =>{
+        let x1 = v.point1.x + translateX
+        let y1 = translateY - v.point1.y
+        let x2 = v.point2.x + translateX
+        let y2 = translateY - v.point2.y
+        v.drawText(x1,y1,x2,y2)
+    })
     
-  }
+    points.forEach(p =>{
+        p.drawText(p.x + translateX, translateY - p.y )
+    })
+
+}

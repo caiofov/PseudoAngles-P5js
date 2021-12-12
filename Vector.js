@@ -28,20 +28,47 @@ class Vector{ //Classe para os vetores
   
     }
     
-    draw(){
-    
+    draw(drawArrow = false){
       stroke(this.paint)
       fill(this.paint)
       
       
       if(this.isHover()){ //se o mouse estiver por cima
+        //mudar os valores das cores qeu serão desenhados os vetores, já que o mouse está por cima
+        stroke(255,165,0)
+        fill(255,165,0)
+    
+      }
+      //desenhar a linha do vetor
+      strokeWeight(this.weight)
+      if(drawArrow){ //se pedir para desenhar a seta
+        arrow(this.point1, this.point2) //função externa à classe - não implementada por mim
+      }
+      else{ //caso contrario, desenha apenas a linha normal
+        line(this.point1.x, this.point1.y, this.point2.x, this.point2.y)
+      } 
+    }
+
+    drawText(valueX1 = false, valueY1 = false, valueX2 = false, valueY2 = false){
+
+      stroke(this.paint)
+      fill(this.paint)
+      let x1 = valueX1 || valueX1 == 0 ? valueX1 : this.x1
+      let y1 = valueY1 || valueY1 == 0 ? valueY1 : this.y1
+      let x2 = valueX2 || valueX2 == 0 ? valueX2 : this.x2
+      let y2 = valueY2 || valueY2 == 0 ? valueY2 : this.y2
+      
+      
+      if(this.isHover(x1,y1,x2,y2)){ //se o mouse estiver por cima
         //todo vetor possui o módulo que é mostrado apenas quando o mouse está por cima, para não poluir a tela
         let textModuleFontSize = 15 //tamanho da fonte
         let textModule = "Módulo: "+ nf(this.value, undefined, 2) //texto
         let widthTextModule = textWidth(textModule)*15/12 //largura do texto
         //posição do texto
-        let textModuleY = ((this.y2 - this.y1)/2)+this.y1
-        let textModuleX = ((this.x2 - this.x1)/2)+this.x1
+        
+
+        let textModuleY = ((y2 - y1)/2)+y1
+        let textModuleX = ((x2 - x1)/2)+x1
   
         //Checa se o texto estará dentro do canvas. Caso conntrário, irá atualizar os valores da sua coordenada para que fique alocado.
         if(textModuleX + widthTextModule > width){
@@ -53,30 +80,27 @@ class Vector{ //Classe para os vetores
   
         //agora, desenhar o texto
         textSize(textModuleFontSize)
-        noFill()
         strokeWeight(1)
         text(textModule, textModuleX , textModuleY)
-  
-        //mudar os valores das cores qeu serão desenhados os vetores, já que o mouse está por cima
-        stroke(255,165,0)
-        fill(255,165,0)
     
       }
-      //desenhar a linha do vetor
-      strokeWeight(this.weight)
-      arrow(this.point1, this.point2) //função externa à classe - não implementada por mim
       
     }
     
-    isHover(){ //verifica se o mouse está por cima da linha do vetor
-      let pos = mousePosition()
+    isHover(vX1 = false,vY1= false,vX2= false,vY2 = false){ //verifica se o mouse está por cima da linha do vetor
+      let pos = [mouseX - translateX, translateY - mouseY]
       let result = this.lineFunction(pos[0]) //calcula o valor de Y na reta para o X do mouse
       
+      let x1 = vX1 || vX1 == 0 ? vX1 : this.x1
+      let y1 = vY1 || vY1 == 0 ? vY1 : this.y1
+      let x2 = vX2 || vX2 == 0 ? vX2 : this.x2
+      let y2 = vY2 || vY2 == 0 ? vY2 : this.y2
+
       //descobrir os valores máximos e mínimos de cada eixo (qual ponto é maior e qual é menor)
-      let maxX = ( this.x1 > this.x2 ? this.x1 : this.x2 )
-      let minX = ( this.x1 > this.x2 ? this.x2 : this.x1 )
-      let maxY = ( this.y1 > this.y2 ? this.y1 : this.y2 )
-      let minY = ( this.y1 > this.y2 ? this.y2 : this.y1 )
+      let maxX = ( x1 > x2 ? x1 : x2 )
+      let minX = ( x1 > x2 ? x2 : x1 )
+      let maxY = ( y1 > y2 ? y1 : y2 )
+      let minY = ( y1 > y2 ? y2 : y1 )
   
       //verifica se está dentro, com certa margem para facilitar
       return  (result < pos[1] + this.weight+3 
