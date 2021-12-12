@@ -173,16 +173,20 @@ function dotAngle(u, v){ //recebe dois vetores e calcula o angulo entre eles
     print("Produto escalar: "+ d)
     let nu = u.value //modulo de u
     let nv = v.value //modulo de v
-
+    if(nu*nv == 0){
+      return 0
+    }
     let c = d / (nu*nv) //cosseno
-    print("Cosseno:"+c)
-    print("retorno da função: "+ acos(c)*180/PI)
+
     return acos(c)*180/PI //retorna o angulo - transformação de cosseno para angulo em graus
 }
 function crossAngle(u, v){ 
     let d = cross(u.point2, v.point2)
     let nu = u.value //comprimento de u
     let nv = v.value //comprimento de v
+    if(nu*nv == 0){
+      return 0
+    }
     let c = d / (nu*nv) //seno
     
     return asin(c)*180/PI; //retorna o angulo - transformação de cosseno para angulo em graus

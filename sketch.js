@@ -48,7 +48,11 @@ function setup(){
     //variaveis para transformar o canva
     translateX = width/2
     translateY = height/2
-  
+
+    //para testes
+    // vectors = [new Vector(new Point([0,0]), new Point([30,45]), color(1,31,75))]
+    // points = [new Point([30,45], color(1,31,75))]
+    // isDrawing = false
 }
   
 function mousePressed(){
