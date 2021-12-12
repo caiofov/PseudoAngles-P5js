@@ -18,9 +18,11 @@ var delText = '[DEL] - Remover elemento'
 var addButton, clearButton, backgroundColor, scpWidth, shuffleButton, centralizeButton;
 var buttons = [];
 
-//dimensoes canva
-var cnvWidth = 550
-var cnvHeight = 500
+function transformCanva(){
+    // transformações para o sistema Y para cima e origem no centro da tela  
+    translate( width/2, height/2)
+    scale( 1, -1 )
+}
 
 function deleteElement(){ //deleta elemento que o mouse está por cima -> só é chamada quando a tecla DEL é pressionada
 
@@ -48,11 +50,11 @@ function mousePosition(){ //quando chamada, retorna a posição do mouse
     //verificando os limites do canvas -> se passar do limite, será considerado como se fosse o próprio limite
 
     //limite para o eixo X (largura)
-    if(x > cnvWidth){x = cnvWidth}
+    if(x > width){x = width}
     else if(x<0){x = 0}
 
     //limite para o eixo Y (altura)
-    if(y > cnvHeight){ y = cnvHeight }
+    if(y > height){ y = height }
     else if(y < 0){ y = 0}
 
     return [x, y]
@@ -109,8 +111,8 @@ function centralizePoints(){ //centraliza os pontos para o meio do canvas
     })
 
     //para cada eixo, tiratremos a media dos pontos e veremos o quanto esse ponto médio será deslocado para ficar no centro do canvas
-    let difX = cnvWidth/2 - media(arrX) //(Meio do eixo X) - (Coordenada X do ponto médio)
-    let difY = cnvHeight/2 - media(arrY)//(Meio do eixo Y) - (Coordenada Y do ponto médio)
+    let difX = width/2 - media(arrX) //(Meio do eixo X) - (Coordenada X do ponto médio)
+    let difY = height/2 - media(arrY)//(Meio do eixo Y) - (Coordenada Y do ponto médio)
     
     //cada ponto será deslocado os valores medidos acima
     points.forEach(p=>{
@@ -140,8 +142,8 @@ function checkCanvasBounds(){ //verifica se os todos os pontos estão dentro dos
     
     //verifica se o ponto atual do loop fica forá do canvas de alguma forma
     //modifica o primeiro ponto do primeiro vetor e depois atualiza todos os outros baseados nessa mudança
-    if (p.x > cnvWidth){ 
-      firstPoint.setX(firstPoint.x - (p.x - cnvWidth)) //mover mais para a esquerda o primeiro ponto
+    if (p.x > width){ 
+      firstPoint.setX(firstPoint.x - (p.x - width)) //mover mais para a esquerda o primeiro ponto
       changed = true
     }
     else if(p.x < 0){
@@ -149,8 +151,8 @@ function checkCanvasBounds(){ //verifica se os todos os pontos estão dentro dos
       changed = true
     }
 
-    if(p.y > cnvHeight){
-      firstPoint.setY(firstPoint.y - (p.y - cnvHeight)) //mover mais para a cima o primeiro ponto
+    if(p.y > height){
+      firstPoint.setY(firstPoint.y - (p.y - height)) //mover mais para a cima o primeiro ponto
       changed = true
     }
     else if (p.y < 0){
@@ -172,4 +174,20 @@ function updatePointSequence(){ //atualiza a sequencia de pontos e modifica os v
     vectors[i+1].setPoints(vectors[i].point2) //para cada vetor, seu primeiro ponto será o último do vetor anterio
   }
   regeneratePoints() //atualiza o vetor de pontos
+}
+
+
+function dotAngle(u, v){ //recebe dois vetores e calcula o angulo entre eles
+    let d = dot (u, v) //produto escalar
+    let nu = u.value //comprimento de u
+    let nv = v.value //comprimento de v
+    print("MU = " +nu+" MV = "+nv)
+    let c = d / (nu*nv) //cosseno
+    
+    return acos(c)*180/PI //retorna o angulo - transformação de cosseno para angulo em graus
+}
+
+function dot(u, v){ //produto escalar u.v
+    
+    return u[0]*v[0] + u[1]*v[1]; 
 }

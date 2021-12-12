@@ -29,6 +29,7 @@ class Vector{ //Classe para os vetores
     }
     
     draw(){
+    
       stroke(this.paint)
       fill(this.paint)
       
@@ -43,8 +44,8 @@ class Vector{ //Classe para os vetores
         let textModuleX = ((this.x2 - this.x1)/2)+this.x1
   
         //Checa se o texto estará dentro do canvas. Caso conntrário, irá atualizar os valores da sua coordenada para que fique alocado.
-        if(textModuleX + widthTextModule > cnvWidth){
-          textModuleX -= (textModuleX + widthTextModule - cnvWidth)
+        if(textModuleX + widthTextModule > width){
+          textModuleX -= (textModuleX + widthTextModule - width)
         }
         if(textModuleY - textModuleFontSize < 0){
           textModuleY += textModuleFontSize

@@ -9,9 +9,12 @@ class Point{ //Classe para os pontos que formam os vetores
         this.color = color //cor
     }
 
-    draw(){ //desenha o ponto - deve ser chamada na função de desenho do P5.js
+    draw(translateX = false, translateY = false){ //desenha o ponto - deve ser chamada na função de desenho do P5.js
+        let xValue = translateX ? this.x + translateX : this.x
+        let yValue = translateY ? this.y + translateY : this.y
+        
         //todo ponto possui um label que indica sua coordenada
-        let buttonText = "x: " + nf(this.x,undefined, 2) + " y: " + nf(this.y, undefined, 2) //texto do label
+        let buttonText = "x: " + nf(xValue,undefined, 2) + " y: " + nf(yValue, undefined, 2) //texto do label
         let buttonTextFontSize = 15 //tamanho da fonte
         let widthButtonText = textWidth(buttonText) * buttonTextFontSize/14 //largura do texto
         //posição do texto
@@ -30,8 +33,8 @@ class Point{ //Classe para os pontos que formam os vetores
         circle(this.x,this.y,this.radius) //desenho do ponto
 
         //agora, verificaremos se o label passará das extremidades do nosso canvas. Se isso acontecer, sua posição será recalculada
-        if(buttonTextX + widthButtonText > cnvWidth){
-            buttonTextX -= (buttonTextX + widthButtonText) - cnvWidth
+        if(buttonTextX + widthButtonText > width){
+            buttonTextX -= (buttonTextX + widthButtonText) - width
         }
         if(buttonTextY - buttonTextFontSize < 0){
             buttonTextY += buttonTextFontSize
