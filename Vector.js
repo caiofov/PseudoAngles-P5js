@@ -87,28 +87,25 @@ class Vector{ //Classe para os vetores
       
     }
     
-    isHover(vX1 = false,vY1= false,vX2= false,vY2 = false){ //verifica se o mouse está por cima da linha do vetor
-      let pos = [mouseX - translateX, translateY - mouseY]
-      let result = this.lineFunction(pos[0]) //calcula o valor de Y na reta para o X do mouse
-      
-      let x1 = vX1 || vX1 == 0 ? vX1 : this.x1
-      let y1 = vY1 || vY1 == 0 ? vY1 : this.y1
-      let x2 = vX2 || vX2 == 0 ? vX2 : this.x2
-      let y2 = vY2 || vY2 == 0 ? vY2 : this.y2
+    isHover(){ //verifica se o mouse está por cima da linha do vetor
+      let pos = mousePosition()
+      let x = pos[0] - width/2
+      let y = height/2 - pos[1] 
+      let result = this.lineFunction(x) //calcula o valor de Y na reta para o X do mouse
+    
+    //descobrir os valores máximos e mínimos de cada eixo (qual ponto é maior e qual é menor)
+    let maxX = ( this.x1 > this.x2 ? this.x1 : this.x2 )
+    let minX = ( this.x1 > this.x2 ? this.x2 : this.x1 )
+    let maxY = ( this.y1 > this.y2 ? this.y1 : this.y2 )
+    let minY = ( this.y1 > this.y2 ? this.y2 : this.y1 )
 
-      //descobrir os valores máximos e mínimos de cada eixo (qual ponto é maior e qual é menor)
-      let maxX = ( x1 > x2 ? x1 : x2 )
-      let minX = ( x1 > x2 ? x2 : x1 )
-      let maxY = ( y1 > y2 ? y1 : y2 )
-      let minY = ( y1 > y2 ? y2 : y1 )
-  
-      //verifica se está dentro, com certa margem para facilitar
-      return  (result < pos[1] + this.weight+3 
-        && result > pos[1] - this.weight - 3
-        && pos[0] < maxX
-        && pos[1] < maxY
-        && pos[0] > minX
-        && pos[1] > minY)
+    //verifica se está dentro, com certa margem para facilitar
+    return  (result < y + this.weight+3 
+      && result > y - this.weight - 3
+      && x < maxX
+      && y < maxY
+      && x > minX
+      && y > minY)
     }
   
     lineFunction(x){ //função da reta. Retorna um valor de Y para o X dado.

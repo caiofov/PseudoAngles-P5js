@@ -39,9 +39,11 @@ class Point{ //Classe para os pontos que formam os vetores
         strokeWeight(0.5)
         textSize(pointTextFontSize)
         
+        transformCanva()
         if(this.isHover()){ //se o mouse estiver por cima, irá mudar de cor
             fill(255,165,0)
         }
+        resetMatrix()
         
         //agora, verificaremos se o label passará das extremidades do nosso canvas. Se isso acontecer, sua posição será recalculada
         if(pointTextX + widthpointText > width){
@@ -54,8 +56,9 @@ class Point{ //Classe para os pontos que formam os vetores
     }
 
     isHover(){ //verifica se o mouse está por cima
-        let x = mousePosition()[0]
-        let y = mousePosition()[1]
+        let pos = mousePosition()
+        let x = pos[0] - width/2
+        let y = height/2 - pos[1] 
         
         return (x > this.x - this.radius 
             && x < this.x + this.radius 

@@ -202,7 +202,7 @@ function cross(u,v){ //produto vetorial
     return u.x*v.y - v.x*u.y;
 }
 
-function pointVectorSquare(vector){
+function pointVectorSquare(vector){ //calcula o ponto em que o vetor irá colidir com o quadrado no plano cartesiano
   let v = vector.point2
   //indicadores se as coordenadas são maiores ou menores que zero -> apoio para as operações
   let absX = v.x > 0 ? 1 : -1
@@ -238,8 +238,10 @@ function pointVectorSquare(vector){
     p = new Point([x, absY*squareEdge/2], color(255,255,255))
   }
   
-  
-  
   p.radius = 4
   return p;
+}
+
+function pseudoAngleCos(vec1, vec2){ //ccalcular pseudoangulo
+  return 1 - dot(vec1, vec2)/vec1.value * vec2.value
 }
