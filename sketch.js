@@ -50,7 +50,7 @@ function setup(){
     translateY = height/2
 
     //para testes
-    // vectors = [new Vector(new Point([0,0]), new Point([30,220]), color(1,31,75))]
+    vectors = [new Vector(new Point([0,0]), new Point([squareEdge/2,squareEdge/2]), color(1,31,75)), new Vector(new Point([0,0]), new Point([squareEdge/2,0], color(1,31,75)))]
     
     // points = [new Point([30,45], color(1,31,75))]
     // isDrawing = false

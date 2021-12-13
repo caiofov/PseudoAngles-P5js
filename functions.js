@@ -212,7 +212,7 @@ function pointVectorSquare(vector){ //calcula o ponto em que o vetor irá colidi
     return null
   }
 
-  if(v.x == 0 && v.y != 0){ //eixo x
+  else if(v.x == 0 && v.y != 0){ //eixo x
     p = new Point([0,absY*squareEdge/2], color(255,255,255))
   }
   else if (v.y == 0 && v.x !=0){ //eixo y
@@ -237,11 +237,14 @@ function pointVectorSquare(vector){ //calcula o ponto em que o vetor irá colidi
     }
     p = new Point([x, absY*squareEdge/2], color(255,255,255))
   }
+  else if (v.x==v.y){
+    p = new Point([absX*squareEdge/2, absY*squareEdge/2], color(255,255,255))
+  }
   
   p.radius = 4
   return p;
 }
 
 function pseudoAngleCos(vec1, vec2){ //ccalcular pseudoangulo
-  return 1 - dot(vec1, vec2)/vec1.value * vec2.value
+  return 1 - dot(vec1.point2, vec2.point2)/(vec1.value * vec2.value)
 }
