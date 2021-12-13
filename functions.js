@@ -16,8 +16,11 @@ var delText = '[DEL] - Remover elemento'
 var addButton, clearButton, backgroundColor, scpWidth;
 var buttons = [];
 
-//translate canva
+//transformar canva
 var translateX, translateY
+
+//medidas do quadrado no plano cartesiano
+squareEdge = 400;
 
 function transformCanva(){
     // transformações para o sistema Y para cima e origem no centro da tela  
@@ -197,4 +200,46 @@ function dot(u, v){ //produto escalar u.v
 }
 function cross(u,v){ //produto vetorial
     return u.x*v.y - v.x*u.y;
+}
+
+function pointVectorSquare(vector){
+  let v = vector.point2
+  //indicadores se as coordenadas são maiores ou menores que zero -> apoio para as operações
+  let absX = v.x > 0 ? 1 : -1
+  let absY = v.y > 0 ? 1 : -1
+  
+  if(v.x == 0 && v.y == 0){ //vetor nulo
+    return null
+  }
+
+  if(v.x == 0 && v.y != 0){ //eixo x
+    p = new Point([0,absY*squareEdge/2], color(255,255,255))
+  }
+  else if (v.y == 0 && v.x !=0){ //eixo y
+    p = new Point([absX*squareEdge/2,0], color(255,255,255))
+  }
+  else if(absX*v.x > absY*v.y){ //1o, 4o ,5o e 8o octante
+    if(v.x > 0){//primeiro e oitavo octante
+      var y = squareEdge/2*(v.y/v.x)
+    }
+    else if (v.x < 0){ //quarto e quinto octante
+      var y = -squareEdge/2*(v.y/v.x)
+    }
+    p = new Point([absX*squareEdge/2,y], color(255,255,255))
+  }
+  else if(absX*v.x < absY*v.y){
+    
+    if(v.y > 0){ //segundo e terceiro octante
+      var x = (squareEdge/2)*(v.x/v.y)
+    }
+    else if (v.y < 0){ //sexto e sétimo octante
+      var x = -(squareEdge/2)*(v.x/v.y)
+    }
+    p = new Point([x, absY*squareEdge/2], color(255,255,255))
+  }
+  
+  
+  
+  p.radius = 4
+  return p;
 }

@@ -50,7 +50,8 @@ function setup(){
     translateY = height/2
 
     //para testes
-    // vectors = [new Vector(new Point([0,0]), new Point([30,45]), color(1,31,75))]
+    // vectors = [new Vector(new Point([0,0]), new Point([30,220]), color(1,31,75))]
+    
     // points = [new Point([30,45], color(1,31,75))]
     // isDrawing = false
 }
@@ -105,11 +106,12 @@ function keyPressed(){
         break
     }
   }
-  
   function draw() {
     drawBackground()
     let currentEscapeText, currentDelTextY;
   
+    noFill()
+    rect(-squareEdge/2,-squareEdge/2, squareEdge )
     currentPoint = new Point([mouseX - translateX, translateY - mouseY], color(1,31,75))
     currentVector = new Vector(
         new Point([0,0]), 
@@ -133,6 +135,8 @@ function keyPressed(){
     textSize(13)
     vectors.forEach(v =>{ //desenhando os vetores
       v.draw()
+      let collisionPoint = pointVectorSquare(v)
+      if (collisionPoint){collisionPoint.draw()}
     })
   
     points.forEach(p =>{ //desenhando os pontos
