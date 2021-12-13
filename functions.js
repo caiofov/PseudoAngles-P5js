@@ -1,5 +1,4 @@
 var vectors = [] //array de vetores
-var points = [] //array de pontos
 var currentVector; //vetor atual (o que muda com o mouse)
 var currentPoint;
 var isDrawing = true; //diz se está "pausado" ou não
@@ -19,7 +18,7 @@ var buttons = [];
 //transformar canva
 var translateX, translateY
 
-//medidas do quadrado no plano cartesiano
+//medidas do quadrado no plano cartesiano e da circunferencia
 squareEdge = 400;
 
 function transformCanva(){
@@ -33,15 +32,6 @@ function deleteElement(){ //deleta elemento que o mouse está por cima -> só é
     vectors.forEach( v =>{ //verifica se está por cima de um vetor
       if(v.isHover()){
         vectors.splice(vectors.indexOf(v),1) //tira o vetor da lista de vetores. Então, automaticamente, ele não será mais desenhado
-        updatePointSequence() //recalcula os pontos quanto for eliminado um vetor
-        return;
-      }
-    })
-  
-    points.forEach(p =>{ //verifica se está por cima de um ponto
-      if(p.isHover()){
-        points.splice(points.indexOf(p),1) //faz o mesmo, mas para a lista de pontos
-        regenerateVectors()  //recalcula os vetores quando for eliminado o ponto
         return;
       }
     })
@@ -64,67 +54,12 @@ function mousePosition(){ //quando chamada, retorna a posição do mouse
     return [x, y]
 }
 
-function sum(){ //soma os vetores
-  if(vectors.length > 1){
-    //cria um novo vetor soma, que possui o ponto inicial no primeiro ponto do primeiro vetor e o último ponto no último ponto do último vetor
-    let sumVector = new Vector(points[0], points[points.length-1], color(255,0,0))
-
-    vectors.push(sumVector) //adiciona à lista de vetores, para ser desenhado
-    isDrawing = false //dá "pause" no desenho, para evitar possíveis erros
-  }
-  
-}
-
-function regeneratePoints(){ //repopula o vetor de pontos baseado nos pontos dos vetores existentes
-  points = []
-  points.push(vectors[0].point1) //adiciona o primeiro ponto do primeiro vetor
-  
-  vectors.forEach(v =>{ //para cada vetor da lista
-    points.push(v.point2) //adicionará o último ponto desse vetor
-  })
-}
-
-function regenerateVectors(){ //repopula os vetor de vetores baseado nos pontos existentes
-  vectors = []
-  for( i = 0 ; i < points.length-1 ; i++ ) { 
-    vectors.push(new Vector(points[i], points[i+1])) //cada vetor será uma linha entre o ponto atual e o próximo ponto
-  }
-}
 
 function clearAll(){ //remove todos os pontos e todos os vetores
   vectors = []
   points = []
 }
 
-function centralizePoints(){ //centraliza os pontos para o meio do canvas
-    let arrX = [], arrY=[]
-    
-    points.forEach(p=>{ //gera dois arrays: um para todos os valores de X e outro para todos os valores de Y
-        arrX.push(p.x)
-        arrY.push(p.y)
-    })
-
-    //para cada eixo, tiratremos a media dos pontos e veremos o quanto esse ponto médio será deslocado para ficar no centro do canvas
-    let difX = width/2 - media(arrX) //(Meio do eixo X) - (Coordenada X do ponto médio)
-    let difY = height/2 - media(arrY)//(Meio do eixo Y) - (Coordenada Y do ponto médio)
-    
-    //cada ponto será deslocado os valores medidos acima
-    points.forEach(p=>{
-        p.setX(p.x + difX)
-        p.setY(p.y + difY)
-    })
-    
-    regenerateVectors() //recalcula os vetores com base nos pontos
-}
-
-function media(arr){ //função de apoio -> calcula o valor médio de um array
-    let sum = 0
-    arr.forEach(a=>{
-        sum+=a
-    })
-
-    return sum/arr.length
-}
 
 function checkCanvasBounds(){ //verifica se os todos os pontos estão dentro dos pontos
   let i = 0
@@ -161,19 +96,10 @@ function checkCanvasBounds(){ //verifica se os todos os pontos estão dentro dos
     i++
   }
 }
-  
-
-function updatePointSequence(){ //atualiza a sequencia de pontos e modifica os vetores com base nessa sequencia
-  for (let i = 0; i < vectors.length-1; i++) {
-    vectors[i+1].setPoints(vectors[i].point2) //para cada vetor, seu primeiro ponto será o último do vetor anterio
-  }
-  regeneratePoints() //atualiza o vetor de pontos
-}
 
 
 function dotAngle(u, v){ //recebe dois vetores e calcula o angulo entre eles
     let d = dot(u.point2, v.point2) //produto escalar
-    print("Produto escalar: "+ d)
     let nu = u.value //modulo de u
     let nv = v.value //modulo de v
     if(nu*nv == 0){
@@ -245,6 +171,27 @@ function pointVectorSquare(vector){ //calcula o ponto em que o vetor irá colidi
   return p;
 }
 
-function pseudoAngleCos(vec1, vec2){ //ccalcular pseudoangulo
+function pseudoAngleCos(vec1, vec2){ //calcular pseudoangulo
   return 1 - dot(vec1.point2, vec2.point2)/(vec1.value * vec2.value)
+}
+
+function angleFromOrigin(v){
+  //vetor da origem para calcular o angulo
+  var originVector = new Vector(
+    new Point([0,0], color(1,31,75)), 
+    new Point([squareEdge/2 + 20,0], color(1,31,75))
+  )
+
+  var angle;
+  if(v.point2.y < 0 && v.point2.x < 0){
+    angle = (-crossAngle(originVector, v)+180)*PI/180
+  }
+  else if(v.point2.y < 0 && v.point2.x > 0){
+    angle = (360 - dotAngle(originVector, v))*PI/180
+  }
+  else{
+    angle = dotAngle(originVector, v)*PI/180
+  }
+
+  return angle
 }

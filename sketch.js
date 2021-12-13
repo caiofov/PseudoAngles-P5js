@@ -49,18 +49,12 @@ function setup(){
     translateX = width/2
     translateY = height/2
 
-    //para testes
-    vectors = [new Vector(new Point([0,0]), new Point([squareEdge/2,squareEdge/2]), color(1,31,75)), new Vector(new Point([0,0]), new Point([squareEdge/2,0], color(1,31,75)))]
-    
-    // points = [new Point([30,45], color(1,31,75))]
-    // isDrawing = false
 }
   
 function mousePressed(){
     transformCanva()
     if(mouseButton === "left" && isDrawing){ //se apertar com o botao esquerdo e não tiver pausado
         vectors.push(currentVector) //adiciona o vetor atual ao array de vetores
-        points.push(currentPoint) //adiciona o ponto atual no array de pontos
     }
     
     else if(mouseButton === "left" && !(isDrawing)){ //se não tiver desenhando e acionar o mouse
@@ -97,9 +91,6 @@ function keyPressed(){
         break
   
       case(65): //centralizar pontos
-        if(points.length > 1){
-          centralizePoints()
-        }
         break
   
       default:
@@ -112,6 +103,7 @@ function keyPressed(){
   
     noFill()
     rect(-squareEdge/2,-squareEdge/2, squareEdge )
+    circle(0,0, squareEdge)
     currentPoint = new Point([mouseX - translateX, translateY - mouseY], color(1,31,75))
     currentVector = new Vector(
         new Point([0,0]), 
@@ -123,25 +115,43 @@ function keyPressed(){
       currentDelTextY = scpWidth*13/12 + 20 //coord Y da instrução do DEL, caso esteja desenhando
       
       currentPoint.draw() //desenhar ponto atual (posição do mouse)
+      currentVector.draw()
+      currentVector.collisionPoint.draw()
     }
     else{
       currentEscapeText = escapeText2 //texto da instrução do ESC, caso não esteja desenhando
       currentDelTextY = scpWidth2*13/12 + 20 //coord Y da instrução do DEL, caso não esteja desenhando
     }
+
+    var count = 0
     
-    stroke(1,31,75)
-    noFill()
-    strokeWeight(0.4)
-    textSize(13)
     vectors.forEach(v =>{ //desenhando os vetores
-      v.draw()
-      let collisionPoint = pointVectorSquare(v)
-      if (collisionPoint){collisionPoint.draw()}
+      v.draw(true)
+      v.collisionPoint.draw()
+
+      noFill()
+      stroke(1,31,75)
+      strokeWeight(1)
+      //arco do vetor à origem
+      arc(0,0, 70+count, 70+count, 0, angleFromOrigin(v) )
+      count+=15
     })
-  
-    points.forEach(p =>{ //desenhando os pontos
-      p.draw()
-    })
+
+    //desenhar arcos de angulos
+    noFill()
+    stroke(255,255,255)
+    strokeWeight(1)
+    
+    if (vectors.length > 1){
+      var lastAngle = angleFromOrigin(vectors[0])
+      for(let i = 1; i < vectors.length; i++){
+        //arco entre os vetores mais proximos
+        var angle = lastAngle + dotAngle(vectors[i-1], vectors[i])*PI/180 
+        arc(0, 0, 60, 60, lastAngle, angle);
+        lastAngle = angle
+      }
+    }
+    
     
     // buttons.forEach(b=>{ //desenhando os botões
     //   b.draw()
@@ -151,23 +161,17 @@ function keyPressed(){
     // text(delText, currentDelTextY, 55) //texto com instrução para deletar um elemento
     
     
-    //se tiver desenhando, deverá desenhar o vetor atual, o que acompanha o mouse, com origem no centro do plano cartesiano
-    if(isDrawing){
-      currentVector.draw()
-    }
-
     //desenhar os textos
     resetMatrix()
     vectors.forEach(v =>{
-        let x1 = v.point1.x + translateX
-        let y1 = translateY - v.point1.y
-        let x2 = v.point2.x + translateX
-        let y2 = translateY - v.point2.y
-        v.drawText(x1,y1,x2,y2)
+        v.drawText()
+        v.point2.drawText()
+
+        if(v.collisionPoint.isHover()){
+          v.collisionPoint.drawText()
+        }
     })
+    currentVector.point2.drawText()
     
-    points.forEach(p =>{
-        p.drawText(p.x + translateX, translateY - p.y )
-    })
 
 }

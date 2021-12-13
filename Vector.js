@@ -24,7 +24,8 @@ class Vector{ //Classe para os vetores
       this.value = sqrt(
         pow((this.dx),2)+
         pow((this.dy),2)
-        )
+      )
+      this.collisionPoint = pointVectorSquare(this)
   
     }
     
@@ -46,27 +47,27 @@ class Vector{ //Classe para os vetores
       }
       else{ //caso contrario, desenha apenas a linha normal
         line(this.point1.x, this.point1.y, this.point2.x, this.point2.y)
-      } 
+        this.point2.draw()
+      }
+      
     }
 
-    drawText(valueX1 = false, valueY1 = false, valueX2 = false, valueY2 = false){
+    drawText(){
 
       stroke(this.paint)
       fill(this.paint)
-      let x1 = valueX1 || valueX1 == 0 ? valueX1 : this.x1
-      let y1 = valueY1 || valueY1 == 0 ? valueY1 : this.y1
-      let x2 = valueX2 || valueX2 == 0 ? valueX2 : this.x2
-      let y2 = valueY2 || valueY2 == 0 ? valueY2 : this.y2
+      let x1 = this.point1.x + translateX
+      let y1 = translateY - this.point1.y
+      let x2 = this.point2.x + translateX
+      let y2 = translateY - this.point2.y
       
-      
-      if(this.isHover(x1,y1,x2,y2)){ //se o mouse estiver por cima
+      if(this.isHover()){ //se o mouse estiver por cima
         //todo vetor possui o módulo que é mostrado apenas quando o mouse está por cima, para não poluir a tela
-        let textModuleFontSize = 15 //tamanho da fonte
-        let textModule = "Módulo: "+ nf(this.value, undefined, 2) //texto
-        let widthTextModule = textWidth(textModule)*15/12 //largura do texto
-        //posição do texto
+        let textModuleFontSize = 12 //tamanho da fonte
+        let textModule = "|v| = "+ nf(this.value, undefined, 2) //texto
+        let widthTextModule = textWidth(textModule) //largura do texto
         
-
+        //posição do texto
         let textModuleY = ((y2 - y1)/2)+y1
         let textModuleX = ((x2 - x1)/2)+x1
   
@@ -74,13 +75,13 @@ class Vector{ //Classe para os vetores
         if(textModuleX + widthTextModule > width){
           textModuleX -= (textModuleX + widthTextModule - width)
         }
-        if(textModuleY - textModuleFontSize < 0){
+        else if(textModuleY - textModuleFontSize < 0){
           textModuleY += textModuleFontSize
         }
   
         //agora, desenhar o texto
         textSize(textModuleFontSize)
-        strokeWeight(1)
+        strokeWeight(0.4)
         text(textModule, textModuleX , textModuleY)
     
       }
@@ -93,46 +94,29 @@ class Vector{ //Classe para os vetores
       let y = height/2 - pos[1] 
       let result = this.lineFunction(x) //calcula o valor de Y na reta para o X do mouse
     
-    //descobrir os valores máximos e mínimos de cada eixo (qual ponto é maior e qual é menor)
-    let maxX = ( this.x1 > this.x2 ? this.x1 : this.x2 )
-    let minX = ( this.x1 > this.x2 ? this.x2 : this.x1 )
-    let maxY = ( this.y1 > this.y2 ? this.y1 : this.y2 )
-    let minY = ( this.y1 > this.y2 ? this.y2 : this.y1 )
+      //descobrir os valores máximos e mínimos de cada eixo (qual ponto é maior e qual é menor)
+      let maxX = ( this.x1 > this.x2 ? this.x1 : this.x2 )
+      let minX = ( this.x1 > this.x2 ? this.x2 : this.x1 )
+      let maxY = ( this.y1 > this.y2 ? this.y1 : this.y2 )
+      let minY = ( this.y1 > this.y2 ? this.y2 : this.y1 )
 
-    //verifica se está dentro, com certa margem para facilitar
-    return  (result < y + this.weight+3 
-      && result > y - this.weight - 3
-      && x < maxX
-      && y < maxY
-      && x > minX
-      && y > minY)
+      //verifica se está dentro, com certa margem para facilitar
+      return  (result < y + this.weight+3 
+        && result > y - this.weight - 3
+        && x < maxX
+        && y < maxY
+        && x > minX
+        && y > minY)
     }
   
     lineFunction(x){ //função da reta. Retorna um valor de Y para o X dado.
       return this.angular*x + this.linear()
     }
   
-    setPoints(p1){ //atualiza os pontos do vetor, sem que ele perca sua identidade. Deve ser passado como parâmetro um objeto Point que será o primeiro ponto do vetor
-      this.point1 = p1;
-      this.x1 = this.point1.x
-      this.y1 = this.point1.y
-          
-      this.setPoint2() //atualiza o ponto 2
-    }
-  
-    setPoint2(){ //recalcula o ponto 2 com base no ponto 1, sem perder as propriedades do vetor
-      //o novo ponto 2 deverá ter a mesma distância do ponto 1 que o antigo tinha
-      this.x2 = this.x1 + this.dx
-      this.y2 = this.y1 + this.dy
-      this.point2 = new Point([this.x2,this.y2], color(1,31,75))
-    }
-  
     linear(){ //calcula o coeficiente linear
       return this.y1 - this.angular*this.x1
     }
   
-    
-    
   }
   
   // https://stackoverflow.com/questions/44874243/drawing-arrows-in-p5js
@@ -143,7 +127,7 @@ class Vector{ //Classe para os vetores
     let y2 = p2.y
   
     var angle = atan2(y2-y1,x2-x1);
-    var  off  = 12
+    var  off  = 5
     var hoff  = off*0.6
     line(x1,y1, x2,y2)
     push()  
