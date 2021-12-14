@@ -1,5 +1,5 @@
 class Vector{ //Classe para os vetores
-    constructor(point1,point2, paint = color(0,0,0)){
+    constructor(point1,point2, paint = color(0,0,0), angle){
     
       this.point1 = point1 //primeiro ponto (tipo Point)
       this.point2 = point2 //segundo ponto (tipo Point)
@@ -26,6 +26,8 @@ class Vector{ //Classe para os vetores
         pow((this.dy),2)
       )
       this.collisionPoint = pointVectorSquare(this)
+
+      this.angleFromOrigin = angle || angle == 0 ? angle : angleFromOrigin(this)
   
     }
     

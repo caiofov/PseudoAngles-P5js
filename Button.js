@@ -1,5 +1,5 @@
 class Button{ //Classe para os botões de ação.
-    constructor(x,y, color,text, action, margin = 6, fontSize = 15){
+    constructor(x,y, color,text, action, margin = 6, fontSize = 12){
       //posição
       this.x = x
       this.y = y

@@ -1,4 +1,5 @@
 var vectors = [] //array de vetores
+var angles = []
 var currentVector; //vetor atual (o que muda com o mouse)
 var currentPoint;
 var isDrawing = true; //diz se está "pausado" ou não
@@ -35,6 +36,7 @@ function deleteElement(){ //deleta elemento que o mouse está por cima -> só é
         return;
       }
     })
+    recalculateAngles()
 }
   
 function mousePosition(){ //quando chamada, retorna a posição do mouse
@@ -57,7 +59,7 @@ function mousePosition(){ //quando chamada, retorna a posição do mouse
 
 function clearAll(){ //remove todos os pontos e todos os vetores
   vectors = []
-  points = []
+  angles = []
 }
 
 
@@ -122,10 +124,10 @@ function crossAngle(u, v){
 }
 
 function dot(u, v){ //produto escalar u.v
-    return u.x*v.x + u.y*v.y; 
+  return u.x*v.x + u.y*v.y; 
 }
 function cross(u,v){ //produto vetorial
-    return u.x*v.y - v.x*u.y;
+  return u.x*v.y - v.x*u.y;
 }
 
 function pointVectorSquare(vector){ //calcula o ponto em que o vetor irá colidir com o quadrado no plano cartesiano
@@ -179,7 +181,9 @@ function angleFromOrigin(v){
   //vetor da origem para calcular o angulo
   var originVector = new Vector(
     new Point([0,0], color(1,31,75)), 
-    new Point([squareEdge/2 + 20,0], color(1,31,75))
+    new Point([squareEdge/2 + 20,0], color(1,31,75)), 
+    color(1,31,75),
+    0
   )
 
   var angle;
@@ -193,5 +197,36 @@ function angleFromOrigin(v){
     angle = dotAngle(originVector, v)*PI/180
   }
 
-  return angle
+  return new Angle(30,30, 0, angle,color(250,250,250), originVector, v)
+}
+
+function recalculateAngles(){ //recalcula os angulos entre os vetores
+  angles = []
+  if(vectors.length > 0){
+    angles.push(vectors[0].angleFromOrigin)
+  }
+  if (vectors.length > 1){
+
+    for(let i = 1; i < vectors.length; i++){
+      vectors[i].angleFromOrigin.w = 50
+      vectors[i].angleFromOrigin.h = 50
+      angles.push(vectors[i].angleFromOrigin)
+      
+      //arco entre os vetores mais proximos
+      let ang = crossAngle(vectors[i-1], vectors[i])*PI/180
+      ang = ang > 0 ? ang : dotAngle(vectors[i-1], vectors[i])*PI/180
+      var angle = vectors[i-1].angleFromOrigin.end + 
+      angles.push(new Angle(70, 70, vectors[i-1].angleFromOrigin.end, angle, color(250,250,250), vectors[i-1], vectors[i]))
+    }
+  }
+
+  angles.sort(function(a1,a2){ //ordenando o vetor de angulos por tamanho do arco
+    if(a1.w > a2.w){
+      return 1
+    }
+    else if (a1.w < a2.w){
+      return -1
+    }
+    return 0
+  })
 }

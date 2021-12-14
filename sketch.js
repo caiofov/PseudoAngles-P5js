@@ -34,11 +34,10 @@ function setup(){
     backgroundColor = color(179,205,224)
     
     //criando os botões
-    addButton = new Button(10, 10, color(100,151,177), addText, "add");
-    clearButton = new Button(110, 10, color(100,151,177), clearText, "clear");
+    clearButton = new Button(width - 100, height - 28, color(100,151,177), clearText, "clear");
   
     //definindo o array de botões
-    buttons = [addButton, clearButton]
+    buttons = [clearButton]
   
     //calculando o tamanho dos textos que aparecerão na tela
     scpWidth = textWidth(escapeText)
@@ -53,8 +52,13 @@ function setup(){
   
 function mousePressed(){
     transformCanva()
-    if(mouseButton === "left" && isDrawing){ //se apertar com o botao esquerdo e não tiver pausado
-        vectors.push(currentVector) //adiciona o vetor atual ao array de vetores
+    if(mouseButton === "left" && isDrawing){ //se apertar com o botao esquerdo e não tiver pausado  
+      vectors.push(currentVector) //adiciona o vetor atual ao array de vetores
+
+      if(vectors.length > 2){
+        vectors.splice(vectors[0],1)
+      }
+      recalculateAngles()
     }
     
     else if(mouseButton === "left" && !(isDrawing)){ //se não tiver desenhando e acionar o mouse
@@ -70,10 +74,6 @@ function mousePressed(){
   
 function keyPressed(){
     switch(keyCode){
-      
-      case(83): //somar
-        sum()
-        break
         
       case(27): //"pausar"
         isDrawing = !(isDrawing)
@@ -82,21 +82,12 @@ function keyPressed(){
       case(67): //limpar
         clearAll()
         break
-      
-      case(69):
-        break
-      
-      case(46): //apagar um elemento
-        deleteElement()
-        break
-  
-      case(65): //centralizar pontos
-        break
   
       default:
         break
     }
   }
+
   function draw() {
     drawBackground()
     let currentEscapeText, currentDelTextY;
@@ -123,7 +114,14 @@ function keyPressed(){
       currentDelTextY = scpWidth2*13/12 + 20 //coord Y da instrução do DEL, caso não esteja desenhando
     }
 
-    var count = 0
+    //verificar se o mouse está dentro de algum angulo
+    angles.forEach( a =>{
+      a.draw()
+    })
+    if(vectors.length > 1){
+      angles[angles.length - 1].drawText()
+    }
+    
     
     vectors.forEach(v =>{ //desenhando os vetores
       v.draw(true)
@@ -132,37 +130,21 @@ function keyPressed(){
       noFill()
       stroke(1,31,75)
       strokeWeight(1)
-      //arco do vetor à origem
-      arc(0,0, 70+count, 70+count, 0, angleFromOrigin(v) )
-      count+=15
     })
-
-    //desenhar arcos de angulos
-    noFill()
-    stroke(255,255,255)
-    strokeWeight(1)
-    
-    if (vectors.length > 1){
-      var lastAngle = angleFromOrigin(vectors[0])
-      for(let i = 1; i < vectors.length; i++){
-        //arco entre os vetores mais proximos
-        var angle = lastAngle + dotAngle(vectors[i-1], vectors[i])*PI/180 
-        arc(0, 0, 60, 60, lastAngle, angle);
-        lastAngle = angle
-      }
-    }
     
     
-    // buttons.forEach(b=>{ //desenhando os botões
-    //   b.draw()
-    // })
-    // //desenhar os textos
-    // text(currentEscapeText, 10 , 55) //texto com instruçao para para/começar a desenhar
-    // text(delText, currentDelTextY, 55) //texto com instrução para deletar um elemento
+    resetMatrix()
+    buttons.forEach(b=>{ //desenhando os botões
+      b.draw()
+    })
+    //desenhar os textos
+    textSize(10)
+    text(currentEscapeText, 10 , height - 5) //texto com instruçao para para/começar a desenhar
+    text(delText, 150, height - 5) //texto com instrução para deletar um elemento
     
     
     //desenhar os textos
-    resetMatrix()
+    
     vectors.forEach(v =>{
         v.drawText()
         v.point2.drawText()
