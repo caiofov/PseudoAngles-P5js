@@ -1,5 +1,5 @@
 var vectors = [] //array de vetores
-var angles = []
+var angle;
 var currentVector; //vetor atual (o que muda com o mouse)
 var currentPoint;
 var isDrawing = true; //diz se está "pausado" ou não
@@ -201,32 +201,42 @@ function angleFromOrigin(v){
 }
 
 function recalculateAngles(){ //recalcula os angulos entre os vetores
-  angles = []
-  if(vectors.length > 0){
-    angles.push(vectors[0].angleFromOrigin)
-  }
-  if (vectors.length > 1){
+  // angles = []
+  // // if(vectors.length > 0){
+  // //   angles.push(vectors[0].angleFromOrigin)
+  // // }
+  // if (vectors.length > 1){
 
-    for(let i = 1; i < vectors.length; i++){
-      vectors[i].angleFromOrigin.w = 50
-      vectors[i].angleFromOrigin.h = 50
-      angles.push(vectors[i].angleFromOrigin)
+  //   for(let i = 1; i < vectors.length; i++){
+      // vectors[i].angleFromOrigin.w = 50
+      // vectors[i].angleFromOrigin.h = 50
+      // angles.push(vectors[i].angleFromOrigin)
       
       //arco entre os vetores mais proximos
-      let ang = crossAngle(vectors[i-1], vectors[i])*PI/180
-      ang = ang > 0 ? ang : dotAngle(vectors[i-1], vectors[i])*PI/180
-      var angle = vectors[i-1].angleFromOrigin.end + 
-      angles.push(new Angle(70, 70, vectors[i-1].angleFromOrigin.end, angle, color(250,250,250), vectors[i-1], vectors[i]))
+      // let ang = crossAngle(vectors[i-1], vectors[i])*PI/180
+      // ang = ang > 0 ? ang : dotAngle(vectors[i-1], vectors[i])*PI/180
+      // var angle = vectors[i-1].angleFromOrigin.end 
+      // angles.push(new Angle(70, 70, vectors[i-1].angleFromOrigin.end, angle, color(250,250,250), vectors[i-1], vectors[i]))
+    // }
+    if(vectors.length > 1){
+      let ang = crossAngle(vectors[0], vectors[1])*PI/180
+      ang = ang > 0 ? ang : dotAngle(vectors[0], vectors[1])*PI/180
+      var angle = vectors[0].angleFromOrigin.end
+      return new Angle(70, 70, vectors[0].angleFromOrigin.end, angle, vectors[0], vectors[1])
     }
-  }
+    else{
+      return null
+    }
+    
+  
 
-  angles.sort(function(a1,a2){ //ordenando o vetor de angulos por tamanho do arco
-    if(a1.w > a2.w){
-      return 1
-    }
-    else if (a1.w < a2.w){
-      return -1
-    }
-    return 0
-  })
+  // angles.sort(function(a1,a2){ //ordenando o vetor de angulos por tamanho do arco
+  //   if(a1.w > a2.w){
+  //     return 1
+  //   }
+  //   else if (a1.w < a2.w){
+  //     return -1
+  //   }
+  //   return 0
+  // })
 }

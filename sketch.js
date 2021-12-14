@@ -58,7 +58,7 @@ function mousePressed(){
       if(vectors.length > 2){
         vectors.splice(vectors[0],1)
       }
-      recalculateAngles()
+      angle = recalculateAngles()
     }
     
     else if(mouseButton === "left" && !(isDrawing)){ //se não tiver desenhando e acionar o mouse
@@ -114,12 +114,16 @@ function keyPressed(){
       currentDelTextY = scpWidth2*13/12 + 20 //coord Y da instrução do DEL, caso não esteja desenhando
     }
 
-    //verificar se o mouse está dentro de algum angulo
-    angles.forEach( a =>{
-      a.draw()
-    })
-    if(vectors.length > 1){
-      angles[angles.length - 1].drawText()
+    // angles.forEach( a =>{
+    //   a.draw()
+    // })
+    
+    // if(vectors.length > 1){
+    //   angles[angles.length - 1].drawText()      
+    // }
+    if(angle){
+      angle.draw()
+      angle.drawText()
     }
     
     

@@ -1,21 +1,20 @@
 class Angle{
-    constructor(w,h,start,end, color, v1, v2){
+    constructor(w,h,start,end, v1, v2){
         this.x = 0
         this.y = 0
         this.w = w
         this.h = h
         this.start = start //graus
         this.end = end //graus
-        this.color = color
         this.v1 = v1
         this.v2 = v2
     }
 
     draw(){
-        stroke(color[0],color[1],color[2])
-       
+        stroke(255,255,255)
         arc(this.x,this.y,this.w,this.h,this.start,this.end)
     }
+
     isHover(){
         let x = mouseX - translateX
         let y = translateY - mouseY
@@ -47,24 +46,24 @@ class Angle{
         stroke(0,0,0)
         fill(0,0,0)
         //calculando o angulo do quadrado
-        let squareX = (Math.abs(this.v2.collisionPoint.x) - Math.abs(this.v1.collisionPoint.x))
-        let squareY = (Math.abs(this.v2.collisionPoint.y) - Math.abs(this.v1.collisionPoint.y))
+        let squareX = ((this.v2.collisionPoint.x) - (this.v1.collisionPoint.x))
+        let squareY = ((this.v2.collisionPoint.y) - (this.v1.collisionPoint.y))
 
         let valueX = squareX/(squareEdge/2)
         let valueY = squareY/(squareEdge/2)
-        let square = Math.abs(valueX+valueY)
+        let square = Math.abs(valueX)+Math.abs(valueY)
 
 
         let escalarAngle = dotAngle(this.v1,this.v2)
         let vectorialAngle = crossAngle(this.v1,this.v2)
         let cosAngle = pseudoAngleCos(this.v1,this.v2)
 
-        let textSquare = "Quadrado="+nf(square, undefined, 2)
-        let textEsc = "Escalar="+nf(escalarAngle, undefined, 2)
-        let textVect = "Vetorial="+nf(vectorialAngle, undefined, 2)
-        let textCos = "Cosseno="+nf(cosAngle, undefined, 2)
+        let textSquare = "Quadrado: "+nf(square, undefined, 2)
+        let textEsc = "Escalar: "+nf(escalarAngle, undefined, 2)
+        let textVect = "Vetorial: "+nf(vectorialAngle, undefined, 2)
+        let textCos = "Cosseno: "+nf(cosAngle, undefined, 2)
 
-        text("Pseudo angulos obtidos: ", 10, 10)
+        text("- Pseudo angulos obtidos -", 10, 10)
         text(textSquare, 10, 25)
         text(textEsc, 10, 40)
         text(textVect, 10, 55)
